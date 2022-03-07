@@ -1,0 +1,71 @@
+<!-- Author: Sherif Aboraya -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPG Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/vue@next" defer></script>
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <header>
+    <h1>The Witcher Simulator</h1>
+  </header>
+  <div id="game">
+    <section id="monster" class="container" style="background-image: url('Monster.jpg');">
+      <h2>Monster Health</h2>
+      <div class="healthbar">
+        <div class="healthbar__value" :style="monsterBarStyles"></div>
+      </div>
+    </section>
+    <section id="player" class="container" style="background-image: url('Geralt.png');">
+      <h2>Geralt's Health</h2>
+      <div class="healthbar">
+        <div class="healthbar__value" :style="playerBarStyles"></div>
+      </div>
+    </section>
+    <section class="container" v-if="winner">
+      <h2> Game Over! </h2>
+      <h3 v-if="winner === 'draw'"> It is a draw </h3>
+      <h3 v-if="winner === 'player'"> Player Wins! </h3>
+      <img src="Geralt thumbs up.jfif" v-if="winner === 'player'" style="margin: 75px; height: 300px;">
+      <h3 v-if="winner === 'monster'"> Monster Wins! </h3>
+      <button @click="startNewGame"> Start New Game </button>
+    </section> 
+    <section id="controls" v-if="!winner">
+      <button @click="attackMonster">ATTACK</button>
+      <button @click="specialAttackMonster" :disabled="specialAttackAllowed">SPECIAL ATTACK</button>
+      <button @click="healPlayer">HEAL</button>
+      <button @click="surrender">SURRENDER</button>
+    </section>
+    <section id="log" class="container">
+      <h2>Battle Log</h2>
+      <ul>
+        <li v-for="logMessage in logMessages">
+          <span
+          :class="{'log--player': logMessage.actionBy === 'player', 'log--monster': logMessage.actionBy === 'monster'}"
+          > {{ logMessage.actionBy === 'player' ? 'Geralt' : 'Monster'}}</span>
+          <span v-if="logMessage.actionType === 'heal'"> heals himself for <span class="log--heal"> {{ logMessage.actionValue }} </span> </span> 
+          <span v-else-if="logMessage.actionType === 'attack'"> attacks and deals <span class="log--damage"> {{logMessage.actionValue }} </span> </span> 
+          <span v-else-if="logMessage.actionType === 'surrenders'" class="log--surrender"> surrenders </span>
+          <span v-else-if="logMessage.actionType === 'wins'" class="log-win"> *WINS* </span>
+        </li>
+      </ul>
+    </section>
+    <section id="rules" class="container">
+      <h2> Game Rules <h2>
+        <h3> 1. Your objective is reducing your opponent's life points into zero. </h3> 
+        <h3> 2. You can only use the special attack every third turn. </h3> 
+        <h3> 3. Healing passes a turn (Your opponent can attack you). </h3>
+        <h3> 4. You can always surrender if the competition is too difficult. </h3> 
+    </section>
+  </div>
+</body>
+
+</html>
